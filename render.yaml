@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: your-service-name
+    name: AI Web Scrapper
     env: python
     buildCommand: pip install -r requirements.txt && playwright install
     startCommand: gunicorn main:app
