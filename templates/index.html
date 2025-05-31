@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Info Search</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .container { max-width: 800px; margin: auto; }
+    input[type=text] { width: 100%; padding: 12px; font-size: 16px; }
+    button { padding: 10px 20px; margin-top: 10px; font-size: 16px; }
+    img { margin: 10px; max-height: 150px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 AI Web Info Search Engine</h1>
+    <form method="post">
+      <input type="text" name="query" placeholder="E.g. Who is the current president of France?" required>
+      <button type="submit">Search</button>
+    </form>
+
+    {% if result %}
+      {% if result.error %}
+        <p style="color: red;">{{ result.error }}</p>
+      {% else %}
+        <h2>📄 Summary</h2>
+        <p>{{ result.summary }}</p>
+
+        <h3>🔗 Sources</h3>
+        <ul>
+          {% for url in result.sources %}
+            <li><a href="{{ url }}" target="_blank">{{ url }}</a></li>
+          {% endfor %}
+        </ul>
+
+        {% if result.profile_images %}
+          <h3>🖼️ Profile Images</h3>
+          {% for img_url in result.profile_images %}
+            <img src="{{ img_url }}" alt="Profile image">
+          {% endfor %}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  </div>
+</body>
+</html>
