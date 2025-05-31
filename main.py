@@ -4,6 +4,7 @@ import logging
 import threading
 from flask import Flask, request, jsonify, render_template
 from search import run_search, hardcoded_fallback_urls
+import os
 
 # Configure logging
 logging.basicConfig(
@@ -107,4 +108,5 @@ def api_search():
         return jsonify(fallback_response)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Render injects PORT
+    app.run(host='0.0.0.0', port=port, debug=True)
