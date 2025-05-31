@@ -1,6 +1,12 @@
-flask
-requests
-beautifulsoup4
+Flask==2.3.2
+requests==2.31.0
+beautifulsoup4==4.12.2
 undetected-chromedriver>=3.5.3
 google
 gunicorn
+playwright==1.35.0
+urllib3==2.0.3
+lxml==4.9.3
+
+# Optional NLP libs you might want to add:
+# spacy==3.5.0

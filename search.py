@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import time  # Add this import
+from scrape import scrape_website, extract_body_content, clean_body_content, split_dom_content, close_driver
 
 from scrape import scrape_website, extract_body_content, clean_body_content, split_dom_content
 from parse import parse_with_ollama
