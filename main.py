@@ -41,8 +41,7 @@ def api_search():
         
         # Run the search in a separate thread with a timeout
         result = None
-        error = None
-        
+
         def search_thread():
             nonlocal result
             try:
@@ -56,10 +55,8 @@ def api_search():
         thread.join(timeout=60)  # Wait up to 60 seconds
         
         if thread.is_alive():
-            # If the thread is still running after timeout, return a fallback response instead of an error
+            # If still running after timeout, provide fallback results instead of error
             logger.warning(f"Search timed out for query: {query}")
-            
-            # Create a fallback response with basic information
             fallback_urls = hardcoded_fallback_urls(query)
             fallback_response = {
                 "query": query,
@@ -67,11 +64,9 @@ def api_search():
                 "sources": fallback_urls,
                 "profile_images": []
             }
-            
             return jsonify(fallback_response)
         
-        if result is None:
-            # Create a fallback response for unexpected errors
+        if result is None or "error" in result:
             fallback_urls = hardcoded_fallback_urls(query)
             fallback_response = {
                 "query": query,
@@ -79,34 +74,25 @@ def api_search():
                 "sources": fallback_urls,
                 "profile_images": []
             }
-            return jsonify(fallback_response)
-            
-        if "error" in result:
-            logger.warning(f"Search error: {result['error']}")
-            # Replace error with fallback response
-            fallback_urls = hardcoded_fallback_urls(query)
-            fallback_response = {
-                "query": query,
-                "summary": f"Here are some general resources that might be related to '{query}'.",
-                "sources": fallback_urls,
-                "profile_images": []
-            }
+            if result and "error" in result:
+                logger.warning(f"Search error: {result['error']}")
             return jsonify(fallback_response)
         
         logger.info(f"Search completed successfully for: {query}")
         return jsonify(result)
+    
     except Exception as e:
-        logger.error(f"API error: {e}", exc_info=True)  # Log the full exception
-        # Return fallback response instead of error
-        fallback_urls = hardcoded_fallback_urls(query)
+        logger.error(f"API error: {e}", exc_info=True)
+        # Use fallback if anything unexpected occurs
+        fallback_urls = hardcoded_fallback_urls(data.get('query', '') if data else '')
         fallback_response = {
-            "query": query,
-            "summary": f"Here are some general resources that might be related to '{query}'.",
+            "query": data.get('query', '') if data else '',
+            "summary": f"Here are some general resources that might be related to your query.",
             "sources": fallback_urls,
             "profile_images": []
         }
         return jsonify(fallback_response)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Render injects PORT
+    port = int(os.environ.get('PORT', 5000))  # Render injects PORT env variable
     app.run(host='0.0.0.0', port=port, debug=True)
